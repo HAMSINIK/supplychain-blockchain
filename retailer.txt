@@ -1,0 +1,29 @@
+pragma solidity ^0.4.24;
+import "browser/pharma_mfg.sol";
+contract retailer is pharmaDetails{
+    pharmaDetails p= pharmaDetails(0xb87213121fb89cbd8b877cb1bb3ff84dd2869cfa);
+    
+    address retail;
+    function retailer(){
+        retail=msg.sender;
+    }
+    
+    modifier ifRetail(){
+        if(retail!=msg.sender){
+            throw;
+        }
+        _;
+    }
+    
+    function getRetailmedDetails(address medAddress)public constant returns(string,string,string,uint,string,string){
+        return(p.getmedDetails(medAddress));
+    }
+    
+    function recvRetailer(address medAddress) public ifRetail{
+        p.recvRetailer(medAddress);
+    }
+    
+    function soldToCustomer(address medAddress) public ifRetail{
+        p.soldToCustomer(medAddress);
+    }
+}

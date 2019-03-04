@@ -1,0 +1,30 @@
+pragma solidity ^0.4.24;
+import "browser/pharma_mfg.sol";
+contract customer is pharmaDetails{
+    pharmaDetails p=pharmaDetails(0xb87213121fb89cbd8b877cb1bb3ff84dd2869cfa);
+    
+    address cust;
+    function customer(){
+        cust=msg.sender;
+    }
+    
+    modifier ifCust(){
+        if(cust!=msg.sender){
+            throw;
+        }_;
+    }
+    
+    function purchasedProduct(address medAddress) public ifCust{
+        p.purchasedProduct(medAddress);
+    }
+    
+    function getCustmedDetails(address medAddress)public constant returns(string,string,string,uint,string,string){
+        return(p.getmedDetails(medAddress));
+    }
+    
+    function validateCustMedicine(address valAddress) public constant returns(string){
+        return(p.validateMedicine(valAddress));
+    }
+    
+    
+}

@@ -1,0 +1,29 @@
+pragma solidity ^0.4.24;
+import "browser/pharma_mfg.sol";
+contract distributor is pharmaDetails{
+    pharmaDetails p=pharmaDetails(0xb87213121fb89cbd8b877cb1bb3ff84dd2869cfa);
+    
+    address distr;
+    
+    function distributor(){
+        distr=msg.sender;
+    }
+    
+    modifier ifDistr(){
+        if(distr!=msg.sender){
+            throw;
+        }
+        _;
+    }
+    
+    function getDistrmedDetails(address medAddress)public constant returns(string,string,string,uint,string,string){
+        return(p.getmedDetails(medAddress));
+    }
+    function recvDistributor(address medAddress)public ifDistr{
+        p.recvDistributor(medAddress);
+    }
+    
+    function sendToRetailer(address medAddress)public ifDistr{
+        p.sendToRetailer(medAddress);
+    }
+}

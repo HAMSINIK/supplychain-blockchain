@@ -1,0 +1,91 @@
+pragma solidity ^0.4.24;
+contract pharmaDetails {
+    
+    struct medicine {
+        address medAddress;
+        string mfgName;
+        string medName;
+        string mfgDate;
+        string expDate;
+        uint price;
+        string composition;
+        string medOwner;
+        bool circulation;
+    }
+    
+    address mfgr;
+    mapping(address => medicine)medicines;
+    
+    function pharmaDetails(){
+        mfgr=msg.sender; 
+    }
+    
+    modifier ifMfgr(){
+        if(mfgr!=msg.sender){
+            throw;
+        }
+        _;
+    }
+    
+    function setmedDetails(string _medName,string _mfgName,string _mfgDate,string _expDate,uint _price,string _composition) public ifMfgr{
+        medicines[msg.sender].medAddress=msg.sender;
+        medicines[msg.sender].medName=_medName;
+        medicines[msg.sender].mfgDate=_mfgDate;
+        medicines[msg.sender].expDate=_expDate;
+        medicines[msg.sender].price=_price;
+        medicines[msg.sender].composition=_composition;
+        medicines[msg.sender].medOwner="At Manufacturer";
+        medicines[msg.sender].circulation=true;
+    }
+    
+    function updatePrice(address medAddress,uint _newPrice) public ifMfgr{
+        medicines[medAddress].price=_newPrice;
+    }
+    
+    function getmedDetails(address medAddress) public constant returns(string,string,string,uint,string,string){
+        return(medicines[medAddress].medName,medicines[medAddress].mfgDate,medicines[medAddress].expDate,medicines[medAddress].price,medicines[medAddress].medOwner,medicines[medAddress].composition);
+    }
+    
+    
+    function setOutOfCirculation(address medAddress)public ifMfgr{
+        medicines[medAddress].circulation=false;
+    }
+    
+    function sendToDistributor(address medAddress)public ifMfgr{
+        medicines[medAddress].medOwner="Manufacturer to Distributor";
+    }
+    
+    function recvDistributor(address medAddress)public{
+        medicines[medAddress].medOwner="At Distributor";
+    }
+    
+    function sendToRetailer(address medAddress)public{
+        medicines[medAddress].medOwner="Distributor to Retailer";
+    }
+    
+     function recvRetailer(address medAddress) public{
+        medicines[medAddress].medOwner="At Retailer";
+    }
+    
+    function soldToCustomer(address medAddress) public{
+        medicines[medAddress].medOwner="Sold to Customer";
+    }
+    
+     function purchasedProduct(address medAddress) public{
+        medicines[medAddress].medOwner="At Customer";
+    }
+    
+    function validateMedicine(address valAddress) public constant returns(string){
+        if(medicines[valAddress].medAddress==valAddress){
+            if(medicines[valAddress].circulation==true){
+                return "Valid and in Circulation";
+            }
+            else{
+                return "Valid but not in Circulation";
+            }
+        }
+        else{
+            return "Invalid Medicine";
+        }
+    }
+}
